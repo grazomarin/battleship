@@ -17,22 +17,42 @@ class Ship {
 
 class Gameboard {
   constructor() {
-    this.board = Array(10).fill([
-      ...Array(10).fill({
-        ship: false,
-        hit: false,
-      }),
-    ]);
+    this.board = [];
+  }
+
+  init() {
+    for (let i = 0; i < 9; i++) {
+      const row = [];
+      for (let i = 0; i < 9; i++) {
+        row.push({
+          hit: false,
+          ship: false,
+        });
+      }
+      this.board.push(row);
+    }
   }
 
   #hasShip(c) {
     return this.board[c[0]][c[1]].ship instanceof Ship ? true : false;
   }
 
+  #checkIfCoordinateIsValid(c) {
+    return this.board[c[0]][c[1]] !== undefined ? true : false;
+  }
+
   placeShip(c, length) {
     const ship = new Ship(length);
+    const y = c[0];
+    const x = c[1];
+
     for (let i = 0; i < ship.length; i++) {
-      this.board[c[0]][c[1] + i].ship = ship;
+      if (!this.#checkIfCoordinateIsValid([y, x + i]))
+        throw new Error("ship cannot be placed here");
+      if (this.#hasShip([y, x + i])) {
+        throw new Error("there is a ship already placed");
+      }
+      this.board[y][x + i].ship = ship;
     }
   }
 
