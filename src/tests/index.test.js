@@ -26,6 +26,18 @@ describe("Gameboard", () => {
     expect(myBoard.board[0][3].ship instanceof Ship).toBe(true);
   });
 
+  test("placeShip vertically", () => {
+    const myBoard = new Gameboard();
+    myBoard.init();
+    myBoard.placeShip([0, 1], 3, true);
+    expect(myBoard.board[0][2].ship instanceof Ship).toBe(false);
+    expect(myBoard.board[0][3].ship instanceof Ship).toBe(false);
+
+    expect(myBoard.board[0][1].ship instanceof Ship).toBe(true);
+    expect(myBoard.board[1][1].ship instanceof Ship).toBe(true);
+    expect(myBoard.board[2][1].ship instanceof Ship).toBe(true);
+  });
+
   test("placeShip to an invalid coordinate", () => {
     const myBoard = new Gameboard();
     myBoard.init();
