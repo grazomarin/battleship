@@ -41,19 +41,29 @@ class Gameboard {
     return this.board[c[0]][c[1]] !== undefined ? true : false;
   }
 
-  placeShip(c, length) {
+  placeShip(c, length, vertical = false) {
     const ship = new Ship(length);
     const y = c[0];
     const x = c[1];
 
     for (let i = 0; i < ship.length; i++) {
-      if (!this.#checkIfCoordinateIsValid([y, x + i]))
-        throw new Error("ship cannot be placed here");
-      if (this.#hasShip([y, x + i])) {
-        throw new Error("there is a ship already placed");
+      if (vertical) {
+        if (!this.#checkIfCoordinateIsValid([y + i, x]))
+          throw new Error("ship cannot be placed here");
+        if (this.#hasShip([y + i, x])) {
+          throw new Error("there is a ship already placed");
+        }
+        this.board[y + i][x].ship = ship;
+      } else {
+        if (!this.#checkIfCoordinateIsValid([y, x + i]))
+          throw new Error("ship cannot be placed here");
+        if (this.#hasShip([y, x + i])) {
+          throw new Error("there is a ship already placed");
+        }
+        this.board[y][x + i].ship = ship;
       }
-      this.board[y][x + i].ship = ship;
     }
+    console.log(this.board);
   }
 
   receiveAttack(c) {
