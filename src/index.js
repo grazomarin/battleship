@@ -44,6 +44,20 @@ class Gameboard {
       : false;
   }
 
+  isFull() {
+    let hits = 0;
+    for (let i = 0; i < 10; i++) {
+      this.board[i].forEach((cell) => {
+        if (cell.hit) hits++;
+      });
+    }
+    return hits === 100 ? true : false;
+  }
+
+  hasBeenHit(c) {
+    return this.board[c[0]][c[1]].hit ? true : false;
+  }
+
   placeShip(c, length, vertical = false) {
     const ship = new Ship(length);
     const y = c[0];
@@ -72,6 +86,7 @@ class Gameboard {
   receiveAttack(c) {
     if (!this.#isValidCoordinate([c[0], c[1]]))
       throw new Error("invalid coordinates");
+    if (this.hasBeenHit(c)) throw new Error("already hit");
 
     this.board[c[0]][c[1]].hit = true;
     if (this.#hasShip(c)) this.board[c[0]][c[1]].ship.hit();
@@ -84,11 +99,20 @@ class Player {
     this.gameboard = new Gameboard();
   }
 
-  //   randomAttack(gameboard) {
-  //     const y = Math.floor(Math.round() * 9);
-  //     const x = Math.floor(Math.round() * 9);
-  //     gameboard.receiveAttack([y, x]);
-  //   }
+  randomAttack(gameboard) {
+    let y = Math.floor(Math.random() * 10);
+    let x = Math.floor(Math.random() * 10);
+
+    if (gameboard.isFull()) throw new Error("no more empty space");
+
+    if (gameboard.hasBeenHit([y, x])) {
+      while (gameboard.hasBeenHit([y, x])) {
+        y = Math.floor(Math.random() * 10);
+        x = Math.floor(Math.random() * 10);
+      }
+    }
+    gameboard.receiveAttack([y, x]);
+  }
 
   attack(c, gameboard) {
     gameboard.receiveAttack([c[0], c[1]]);
