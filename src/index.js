@@ -18,12 +18,11 @@ class Ship {
 class Gameboard {
   constructor() {
     this.board = [];
-  }
+    this.ships = [];
 
-  init() {
-    for (let i = 0; i < 9; i++) {
+    for (let i = 0; i < 10; i++) {
       const row = [];
-      for (let i = 0; i < 9; i++) {
+      for (let i = 0; i < 10; i++) {
         row.push({
           hit: false,
           ship: false,
@@ -37,8 +36,12 @@ class Gameboard {
     return this.board[c[0]][c[1]].ship instanceof Ship ? true : false;
   }
 
-  #checkIfCoordinateIsValid(c) {
-    return this.board[c[0]][c[1]] !== undefined ? true : false;
+  #isValidCoordinate(c) {
+    return this.board[c[0]] !== undefined
+      ? this.board[c[0]][c[1]] !== undefined
+        ? true
+        : false
+      : false;
   }
 
   placeShip(c, length, vertical = false) {
@@ -48,28 +51,48 @@ class Gameboard {
 
     for (let i = 0; i < ship.length; i++) {
       if (vertical) {
-        if (!this.#checkIfCoordinateIsValid([y + i, x]))
-          throw new Error("ship cannot be placed here");
+        if (!this.#isValidCoordinate([y + i, x]))
+          throw new Error("invalid coordinates");
         if (this.#hasShip([y + i, x])) {
           throw new Error("there is a ship already placed");
         }
         this.board[y + i][x].ship = ship;
       } else {
-        if (!this.#checkIfCoordinateIsValid([y, x + i]))
-          throw new Error("ship cannot be placed here");
+        if (!this.#isValidCoordinate([y, x + i]))
+          throw new Error("invalid coordinates");
         if (this.#hasShip([y, x + i])) {
           throw new Error("there is a ship already placed");
         }
         this.board[y][x + i].ship = ship;
       }
     }
-    console.log(this.board);
+    this.ships.push(ship);
   }
 
   receiveAttack(c) {
+    if (!this.#isValidCoordinate([c[0], c[1]]))
+      throw new Error("invalid coordinates");
+
     this.board[c[0]][c[1]].hit = true;
     if (this.#hasShip(c)) this.board[c[0]][c[1]].ship.hit();
   }
 }
 
-export { Ship, Gameboard };
+class Player {
+  constructor(AI = false) {
+    this.AI = AI;
+    this.gameboard = new Gameboard();
+  }
+
+  //   randomAttack(gameboard) {
+  //     const y = Math.floor(Math.round() * 9);
+  //     const x = Math.floor(Math.round() * 9);
+  //     gameboard.receiveAttack([y, x]);
+  //   }
+
+  attack(c, gameboard) {
+    gameboard.receiveAttack([c[0], c[1]]);
+  }
+}
+
+export { Ship, Gameboard, Player };
