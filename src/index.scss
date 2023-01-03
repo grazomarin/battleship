@@ -1,0 +1,53 @@
+@use "./style_modules/index" as *;
+
+body {
+  display: grid;
+  grid-template-rows: 100px 1fr;
+}
+
+.head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+
+  padding: $outer-padding;
+  font-family: $strong-font;
+  background-color: $cream;
+  box-shadow: 0px 0px 20px -10px black;
+  z-index: 1;
+
+  &_logo {
+    width: 50px;
+    height: 50px;
+  }
+}
+
+.main {
+  padding: $outer-padding;
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+
+  .board--p1,
+  .board--p2 {
+    display: grid;
+    grid-template-columns: repeat(10, 1fr);
+    grid-template-rows: repeat(10, 1fr);
+    grid-auto-flow: column;
+    width: 500px;
+    height: 500px;
+
+    .row--p1,
+    .row--p2 {
+      display: grid;
+      grid-template-columns: subgrid;
+      grid-auto-flow: column;
+      grid-column: span 10;
+
+      .cell--p1,
+      .cell--p2 {
+        border: 1px solid black;
+      }
+    }
+  }
+}
