@@ -28,8 +28,8 @@ body {
   justify-content: space-around;
   align-items: center;
 
-  .board--p1,
-  .board--p2 {
+  .board-1,
+  .board-2 {
     display: grid;
     grid-template-columns: repeat(10, 1fr);
     grid-template-rows: repeat(10, 1fr);
@@ -37,15 +37,15 @@ body {
     width: 500px;
     height: 500px;
 
-    .row--p1,
-    .row--p2 {
+    .row-1,
+    .row-2 {
       display: grid;
       grid-template-columns: subgrid;
       grid-auto-flow: column;
       grid-column: span 10;
 
-      .cell--p1,
-      .cell--p2 {
+      .cell-1,
+      .cell-2 {
         border: 1px solid black;
       }
     }
