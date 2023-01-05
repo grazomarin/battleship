@@ -54,18 +54,20 @@ class Gameboard {
     const y = c[0];
     const x = c[1];
 
-    for (let i = 0; i < ship.length; i++) {
-      if (vertical) {
-        if (!this.isValidCoordinate([y + i, x])) return false;
-        if (this.hasShip([y + (ship.length - 1), x])) {
-          return false;
-        }
+    if (vertical) {
+      if (!this.isValidCoordinate([y + (ship.length - 1), x])) return false;
+      for (let i = 0; i < length; i++) {
+        if (this.hasShip([y + i, x])) return false;
+      }
+      for (let i = 0; i < length; i++) {
         this.board[y + i][x].ship = ship;
-      } else {
-        if (!this.isValidCoordinate([y, x + (ship.length - 1)])) return false;
-        if (this.hasShip([y, x + i])) {
-          return false;
-        }
+      }
+    } else {
+      if (!this.isValidCoordinate([y, x + (ship.length - 1)])) return false;
+      for (let i = 0; i < length; i++) {
+        if (this.hasShip([y, x + i])) return false;
+      }
+      for (let i = 0; i < length; i++) {
         this.board[y][x + i].ship = ship;
       }
     }
@@ -80,15 +82,30 @@ class Gameboard {
   }
 
   randomFleet() {
-    //place 2 ships length of 3
-    // for (let i = 0; i < 3; i++) {
-    //   let [y, x] = this.returnRandomCoordinates();
-    //   if (
-    //     this.placeShip([y, x], 3, Boolean(Math.round(Math.random()))) === false
-    //   )
-    //     continue;
-    //   i++;
-    // }
+    // place 2 ships length of 3
+    for (let i = 0; i <= 2; i++) {
+      let [y, x] = this.returnRandomCoordinates();
+      while (this.placeShip([y, x], 3, !!Math.round(Math.random())) === false) {
+        [y, x] = this.returnRandomCoordinates();
+      }
+      i++;
+    }
+    //place 2 ships length of 2
+    for (let u = 0; u <= 2; u++) {
+      let [y, x] = this.returnRandomCoordinates();
+      while (this.placeShip([y, x], 2, !!Math.round(Math.random())) === false) {
+        [y, x] = this.returnRandomCoordinates();
+      }
+      u++;
+    }
+    //place 1 ship length of 5
+    for (let z = 0; z <= 1; z++) {
+      let [y, x] = this.returnRandomCoordinates();
+      while (this.placeShip([y, x], 5, !!Math.round(Math.random())) === false) {
+        [y, x] = this.returnRandomCoordinates();
+      }
+      z++;
+    }
   }
 }
 
