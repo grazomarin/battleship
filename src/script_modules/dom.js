@@ -1,7 +1,7 @@
 import logo from "../images/logo.svg";
 document.querySelector(".head_logo").src = logo;
 
-function renderBoards(p1, p2) {
+function renderBoards(p1, AI) {
   const main = document.querySelector(".main");
   const board1 = document.createElement("div");
   const board2 = document.createElement("div");
@@ -25,6 +25,11 @@ function renderBoards(p1, p2) {
       cell2.classList = "cell-2";
       cell1.setAttribute("id", `1-${i}-${u}`);
       cell2.setAttribute("id", `2-${i}-${u}`);
+      cell1.attacker = AI;
+      cell1.attacked = p1;
+      cell2.attacker = p1;
+      cell2.attacked = AI;
+      cell2.addEventListener("click", playerAttack);
       row1.appendChild(cell1);
       row2.appendChild(cell2);
     }
@@ -36,11 +41,25 @@ function renderBoards(p1, p2) {
       if (p1.gameboard.board[z][x].ship) {
         document.getElementById(`1-${z}-${x}`).style.backgroundColor = "blue";
       }
-      if (p2.gameboard.board[z][x].ship) {
+      if (AI.gameboard.board[z][x].ship) {
         document.getElementById(`2-${z}-${x}`).style.backgroundColor = "red";
       }
     }
   }
+}
+
+function playerAttack(click) {
+  const c = click.target.id.split("-");
+  const attacker = click.target.attacker;
+  const attacked = click.target.attacked;
+  const y = c[1];
+  const x = c[2];
+  attacked.gameboard.hasShip([y, x])
+    ? (click.target.style.backgroundColor = "yellow")
+    : (click.target.style.backgroundColor = "green");
+
+  attacker.attack([y, x], attacked.gameboard);
+  console.log(attacked);
 }
 
 export { renderBoards };
