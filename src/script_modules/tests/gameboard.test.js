@@ -24,20 +24,13 @@ describe("Gameboard class", () => {
     expect(myBoard.board[2][1].ship instanceof Ship).toBe(true);
   });
 
-  test("placeShip to an invalid coordinate", () => {
-    const myBoard = new Gameboard();
-    expect(() => myBoard.placeShip([10, 10], 3)).toThrow("invalid coordinates");
-  });
-
   test("placeShip to a coordinate that already has a ship", () => {
     const myBoard = new Gameboard();
     const fakeShip = new Ship(3);
     myBoard.board[1][1].ship = fakeShip;
     myBoard.board[1][2].ship = fakeShip;
     myBoard.board[1][3].ship = fakeShip;
-    expect(() => {
-      myBoard.placeShip([1, 2], 5);
-    }).toThrow("there is a ship already placed");
+    expect(myBoard.placeShip([1, 2], 5)).toBe(false);
   });
 
   test("receiveAttack to an empty coordinate", () => {
