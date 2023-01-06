@@ -57,9 +57,9 @@ function playerAttack(click) {
 
   if (attacker.turn === false) return;
   if (attacked.gameboard.hasBeenHit([y, x]) === true) return;
-  attacked.gameboard.hasShip([y, x])
-    ? (click.target.style.backgroundColor = "yellow")
-    : (click.target.style.backgroundColor = "green");
+
+  const mark = returnMark([y, x], attacked.gameboard);
+  click.target.appendChild(mark);
 
   attacker.attack([y, x], attacked.gameboard);
   attacker.turn = false;
@@ -73,11 +73,23 @@ function aiAttack(player) {
     [y, x] = player.gameboard.returnRandomCoordinates();
   }
   const cell = document.getElementById(`1-${y}-${x}`);
-  player.gameboard.hasShip([y, x])
-    ? (cell.style.backgroundColor = "yellow")
-    : (cell.style.backgroundColor = "green");
+
+  const mark = returnMark([y, x], player.gameboard);
+  cell.appendChild(mark);
 
   player.turn = true;
+}
+
+function returnMark(c, gameboard) {
+  const mark = document.createElement("div");
+  if (gameboard.hasShip([c[0], c[1]])) {
+    mark.textContent = "✖";
+    mark.classList.add("ship_mark");
+  } else {
+    mark.classList.add("empty_mark");
+  }
+
+  return mark;
 }
 
 export { renderBoards };
