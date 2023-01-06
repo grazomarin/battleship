@@ -4,6 +4,7 @@ class Player {
   constructor(AI = false) {
     this.AI = AI;
     this.gameboard = new Gameboard();
+    this.turn = true;
   }
 
   attack(c, gameboard) {

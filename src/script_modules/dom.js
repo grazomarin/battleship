@@ -41,9 +41,9 @@ function renderBoards(p1, AI) {
       if (p1.gameboard.board[z][x].ship) {
         document.getElementById(`1-${z}-${x}`).style.backgroundColor = "blue";
       }
-      if (AI.gameboard.board[z][x].ship) {
-        document.getElementById(`2-${z}-${x}`).style.backgroundColor = "red";
-      }
+      //   if (AI.gameboard.board[z][x].ship) {
+      //     document.getElementById(`2-${z}-${x}`).style.backgroundColor = "red";
+      //   }
     }
   }
 }
@@ -54,12 +54,30 @@ function playerAttack(click) {
   const attacked = click.target.attacked;
   const y = c[1];
   const x = c[2];
+
+  if (attacker.turn === false) return;
+  if (attacked.gameboard.hasBeenHit([y, x]) === true) return;
   attacked.gameboard.hasShip([y, x])
     ? (click.target.style.backgroundColor = "yellow")
     : (click.target.style.backgroundColor = "green");
 
   attacker.attack([y, x], attacked.gameboard);
-  console.log(attacked);
+  attacker.turn = false;
+  setTimeout(aiAttack, 700, attacker);
+}
+
+function aiAttack(player) {
+  // add a stopper if all cells were hit
+  let [y, x] = player.gameboard.returnRandomCoordinates();
+  while (player.gameboard.receiveAttack([y, x]) === false) {
+    [y, x] = player.gameboard.returnRandomCoordinates();
+  }
+  const cell = document.getElementById(`1-${y}-${x}`);
+  player.gameboard.hasShip([y, x])
+    ? (cell.style.backgroundColor = "yellow")
+    : (cell.style.backgroundColor = "green");
+
+  player.turn = true;
 }
 
 export { renderBoards };
