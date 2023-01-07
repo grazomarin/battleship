@@ -39,10 +39,10 @@ function renderBoards(p1, AI) {
   for (let z = 0; z < 10; z++) {
     for (let x = 0; x < 10; x++) {
       if (p1.gameboard.board[z][x].ship) {
-        document.getElementById(`1-${z}-${x}`).style.backgroundColor = "blue";
+        document.getElementById(`1-${z}-${x}`).classList.add("ship_friend");
       }
       //   if (AI.gameboard.board[z][x].ship) {
-      //     document.getElementById(`2-${z}-${x}`).style.backgroundColor = "red";
+      //     document.getElementById(`2-${z}-${x}`).classList.add("ship_enemy");
       //   }
     }
   }
@@ -55,12 +55,11 @@ function playerAttack(click) {
   const y = c[1];
   const x = c[2];
 
+  if (attacker === undefined) return;
   if (attacker.turn === false) return;
   if (attacked.gameboard.hasBeenHit([y, x]) === true) return;
 
-  const mark = returnMark([y, x], attacked.gameboard);
-  click.target.appendChild(mark);
-
+  changeCellStlye([y, x], attacked, click.target);
   attacker.attack([y, x], attacked.gameboard);
   attacker.turn = false;
   setTimeout(aiAttack, 700, attacker);
@@ -74,22 +73,22 @@ function aiAttack(player) {
   }
   const cell = document.getElementById(`1-${y}-${x}`);
 
-  const mark = returnMark([y, x], player.gameboard);
-  cell.appendChild(mark);
+  changeCellStlye([y, x], player, cell);
 
   player.turn = true;
 }
 
-function returnMark(c, gameboard) {
-  const mark = document.createElement("div");
-  if (gameboard.hasShip([c[0], c[1]])) {
-    mark.textContent = "✖";
-    mark.classList.add("ship_mark");
+function changeCellStlye(c, player, cell) {
+  if (player.gameboard.hasShip([c[0], c[1]])) {
+    player.AI
+      ? cell.classList.add("ship_enemy_hit")
+      : cell.classList.add("ship_friend_hit");
   } else {
-    mark.classList.add("empty_mark");
+    cell.classList.add("empty_hit");
+    const mark = document.createElement("div");
+    mark.classList.add("mark");
+    cell.appendChild(mark);
   }
-
-  return mark;
 }
 
 export { renderBoards };

@@ -51,29 +51,58 @@ body {
         align-items: center;
         justify-content: center;
         border: 1px solid rgba(0, 0, 0, 0.223);
-
-        .empty_mark {
-          position: absolute;
-          width: 10px;
-          height: 10px;
-          border-radius: 50%;
-          background-color: black;
-        }
-        // if parent has this child change background color
-        .ship_mark {
-          position: absolute;
-          display: flex;
-          justify-content: center;
-          align-items: center;
-          width: 100%;
-          height: 100%;
-          font-size: 2rem;
-        }
       }
       .cell-2 {
         &:hover {
           background-color: $grey;
           cursor: crosshair;
+        }
+      }
+      .ship_friend {
+        background-color: $blue;
+      }
+      .ship_enemy {
+        background-color: $red;
+        &:hover {
+          background-color: $red;
+        }
+      }
+      .ship_enemy_hit {
+        background-color: $red-transparent;
+        box-shadow: 0 0 10px -1px $red inset;
+
+        &:hover {
+          background-color: $red-transparent;
+        }
+      }
+      .ship_friend_hit {
+        background-color: $blue-transparent;
+        box-shadow: 0 0 10px -1px $blue inset;
+      }
+
+      .ship_friend_hit,
+      .ship_enemy_hit {
+        &::after {
+          display: flex;
+          justify-content: center;
+          align-items: center;
+          content: "✕";
+          position: absolute;
+          width: 20px;
+          height: 20px;
+          font-size: 2.3rem;
+        }
+      }
+      .empty_hit {
+        &:hover {
+          background-color: white;
+        }
+        .mark {
+          position: absolute;
+          width: 10px;
+          height: 10px;
+          border-radius: 50%;
+          background-color: black;
         }
       }
     }
