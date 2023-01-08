@@ -1,7 +1,8 @@
 import Gameboard from "./gameboard";
 
 class Player {
-  constructor(AI = false) {
+  constructor(name, AI = false) {
+    this.name = name;
     this.AI = AI;
     this.gameboard = new Gameboard();
     this.turn = true;

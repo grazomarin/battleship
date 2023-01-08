@@ -57,37 +57,38 @@ function renderShips(p1, AI) {
 
 function playerAttack(click) {
   const c = click.target.id.split("-");
-  const attacker = click.target.attacker;
-  const attacked = click.target.attacked;
+  const p1 = click.target.attacker;
+  const AI = click.target.attacked;
   const y = c[1];
   const x = c[2];
 
-  if (attacker === undefined) return;
-  if (attacker.turn === false) return;
-  if (attacked.gameboard.hasBeenHit([y, x]) === true) return;
+  if (p1 === undefined) return;
+  if (p1.turn === false) return;
+  if (AI.gameboard.hasBeenHit([y, x]) === true) return;
 
-  changeCellStlye([y, x], attacked, click.target);
-  attacker.attack([y, x], attacked.gameboard);
-  attacker.turn = false;
-  setTimeout(aiAttack, 700, attacker);
+  changeCellStlye([y, x], AI, click.target);
+  p1.attack([y, x], AI.gameboard);
+  p1.turn = false;
+  if (isGameOver(p1, AI)) return;
+  setTimeout(aiAttack, 700, p1, AI);
 }
 
-function aiAttack(player) {
+function aiAttack(p1, AI) {
   // add a stopper if all cells were hit
-  let [y, x] = player.gameboard.returnRandomCoordinates();
-  while (player.gameboard.receiveAttack([y, x]) === false) {
-    [y, x] = player.gameboard.returnRandomCoordinates();
+  let [y, x] = p1.gameboard.returnRandomCoordinates();
+  while (p1.gameboard.receiveAttack([y, x]) === false) {
+    [y, x] = p1.gameboard.returnRandomCoordinates();
   }
   const cell = document.getElementById(`1-${y}-${x}`);
 
-  changeCellStlye([y, x], player, cell);
-
-  player.turn = true;
+  changeCellStlye([y, x], p1, cell);
+  if (isGameOver(AI, p1)) return;
+  p1.turn = true;
 }
 
-function changeCellStlye(c, player, cell) {
-  if (player.gameboard.hasShip([c[0], c[1]])) {
-    player.AI
+function changeCellStlye(c, attacked, cell) {
+  if (attacked.gameboard.hasShip([c[0], c[1]])) {
+    attacked.AI
       ? cell.classList.add("ship_enemy_hit")
       : cell.classList.add("ship_friend_hit");
   } else {
@@ -112,8 +113,8 @@ function renderStartScreen() {
 
 function startGame() {
   removeStartScreen();
-  const p1 = new Player();
-  const AI = new Player(true);
+  const p1 = new Player("Kamran");
+  const AI = new Player("AI", true);
   p1.gameboard.randomFleet();
   AI.gameboard.randomFleet();
   renderShips(p1, AI);
@@ -121,6 +122,14 @@ function startGame() {
 
 function removeStartScreen() {
   document.querySelector(".start-screen").remove();
+}
+
+function isGameOver(attacker, attacked) {
+  if (attacked.gameboard.noShipsLeft()) {
+    alert(`${attacker.name} won!`);
+    return true;
+  }
+  return false;
 }
 
 export { renderBoards, renderShips, renderStartScreen, startGame };

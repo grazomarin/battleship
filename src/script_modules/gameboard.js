@@ -48,6 +48,10 @@ class Gameboard {
     return this.board[c[0]][c[1]].reserved === true ? true : false;
   }
 
+  noShipsLeft() {
+    return this.ships.every((ship) => ship.isSunk()) ? true : false;
+  }
+
   #reserveSpace(c) {
     const y = c[0];
     const x = c[1];
