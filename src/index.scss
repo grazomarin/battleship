@@ -6,6 +6,14 @@ body {
   font-family: $strong-font;
 }
 
+h1 {
+  font-size: $h1-size;
+}
+
+h2 {
+  font-size: $h2-size;
+}
+
 .head {
   display: flex;
   align-items: center;
@@ -109,14 +117,15 @@ body {
   }
 }
 
-.start-screen {
+.bg {
   position: absolute;
   width: 100vw;
   height: 100vh;
   z-index: 10;
-  background-color: rgba(0, 0, 0, 0.4);
+  background-color: rgba(0, 0, 0, 0.5);
 
   display: flex;
+  flex-direction: column;
   justify-content: center;
   align-items: center;
   &_button {

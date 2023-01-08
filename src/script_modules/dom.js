@@ -66,7 +66,7 @@ function playerAttack(click) {
   if (p1.turn === false) return;
   if (AI.gameboard.hasBeenHit([y, x]) === true) return;
 
-  changeCellStlye([y, x], AI, click.target);
+  changeCellStlye(["2", y, x], AI, click.target);
   p1.attack([y, x], AI.gameboard);
   p1.turn = false;
   if (isGameOver(p1, AI)) return;
@@ -74,20 +74,22 @@ function playerAttack(click) {
 }
 
 function aiAttack(p1, AI) {
-  // add a stopper if all cells were hit
   let [y, x] = p1.gameboard.returnRandomCoordinates();
   while (p1.gameboard.receiveAttack([y, x]) === false) {
     [y, x] = p1.gameboard.returnRandomCoordinates();
   }
-  const cell = document.getElementById(`1-${y}-${x}`);
-
-  changeCellStlye([y, x], p1, cell);
-  if (isGameOver(AI, p1)) return;
+  changeCellStlye(["1", y, x], p1);
+  if (isGameOver(p1)) renderGameOver(AI);
   p1.turn = true;
 }
 
-function changeCellStlye(c, attacked, cell) {
-  if (attacked.gameboard.hasShip([c[0], c[1]])) {
+function changeCellStlye(c, attacked) {
+  const board = c[0];
+  const y = c[1];
+  const x = c[2];
+
+  const cell = document.getElementById(`${board}-${y}-${x}`);
+  if (attacked.gameboard.hasShip([y, x])) {
     attacked.AI
       ? cell.classList.add("ship_enemy_hit")
       : cell.classList.add("ship_friend_hit");
@@ -102,8 +104,8 @@ function changeCellStlye(c, attacked, cell) {
 function renderStartScreen() {
   const bg = document.createElement("div");
   const startBtn = document.createElement("div");
-  bg.classList.add("start-screen");
-  startBtn.classList.add("start-screen_button");
+  bg.classList.add("bg");
+  startBtn.classList.add("bg_button");
   startBtn.textContent = "Start Game";
   bg.appendChild(startBtn);
   document.querySelector("body").appendChild(bg);
@@ -112,7 +114,7 @@ function renderStartScreen() {
 }
 
 function startGame() {
-  removeStartScreen();
+  removeBackground();
   const p1 = new Player("Kamran");
   const AI = new Player("AI", true);
   p1.gameboard.randomFleet();
@@ -120,16 +122,22 @@ function startGame() {
   renderShips(p1, AI);
 }
 
-function removeStartScreen() {
-  document.querySelector(".start-screen").remove();
+function removeBackground() {
+  document.querySelector(".bg").remove();
 }
 
-function isGameOver(attacker, attacked) {
-  if (attacked.gameboard.noShipsLeft()) {
-    alert(`${attacker.name} won!`);
-    return true;
-  }
-  return false;
+function isGameOver(attacked) {
+  return attacked.gameboard.noShipsLeft() ? true : false;
+}
+function renderGameOver(attacker) {
+  const bg = document.createElement("div");
+  const h1 = document.createElement("h1");
+  const h2 = document.createElement("h2");
+  h1.textContent = `Game Over!`;
+  h2.textContent = `${attacker.name} won`;
+  bg.classList.add("bg");
+  bg.append(h1, h2);
+  document.querySelector("body").append(bg);
 }
 
 export { renderBoards, renderShips, renderStartScreen, startGame };
