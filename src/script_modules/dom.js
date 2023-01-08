@@ -1,6 +1,8 @@
 import logo from "../images/logo.svg";
 document.querySelector(".head_logo").src = logo;
 
+import Player from "./player";
+
 function renderBoards(p1, AI) {
   const main = document.querySelector(".main");
   const board1 = document.createElement("div");
@@ -25,19 +27,24 @@ function renderBoards(p1, AI) {
       cell2.classList = "cell-2";
       cell1.setAttribute("id", `1-${i}-${u}`);
       cell2.setAttribute("id", `2-${i}-${u}`);
-      cell1.attacker = AI;
-      cell1.attacked = p1;
-      cell2.attacker = p1;
-      cell2.attacked = AI;
-      cell2.addEventListener("click", playerAttack);
+
       row1.appendChild(cell1);
       row2.appendChild(cell2);
     }
   }
   main.append(board1, board2);
+}
 
+function renderShips(p1, AI) {
   for (let z = 0; z < 10; z++) {
     for (let x = 0; x < 10; x++) {
+      const cell1 = document.getElementById(`1-${z}-${x}`);
+      const cell2 = document.getElementById(`2-${z}-${x}`);
+      cell1.attacker = AI;
+      cell1.attacked = p1;
+      cell2.attacker = p1;
+      cell2.attacked = AI;
+      cell2.addEventListener("click", playerAttack);
       if (p1.gameboard.board[z][x].ship) {
         document.getElementById(`1-${z}-${x}`).classList.add("ship_friend");
       }
@@ -91,4 +98,29 @@ function changeCellStlye(c, player, cell) {
   }
 }
 
-export { renderBoards };
+function renderStartScreen() {
+  const bg = document.createElement("div");
+  const startBtn = document.createElement("div");
+  bg.classList.add("start-screen");
+  startBtn.classList.add("start-screen_button");
+  startBtn.textContent = "Start Game";
+  bg.appendChild(startBtn);
+  document.querySelector("body").appendChild(bg);
+
+  startBtn.addEventListener("click", startGame);
+}
+
+function startGame() {
+  removeStartScreen();
+  const p1 = new Player();
+  const AI = new Player(true);
+  p1.gameboard.randomFleet();
+  AI.gameboard.randomFleet();
+  renderShips(p1, AI);
+}
+
+function removeStartScreen() {
+  document.querySelector(".start-screen").remove();
+}
+
+export { renderBoards, renderShips, renderStartScreen, startGame };
