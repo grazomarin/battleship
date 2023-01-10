@@ -1,9 +1,4 @@
-import {
-  renderBoard,
-  renderButtons,
-  addButtonListeners,
-  hideBoard,
-} from "./dom";
+import { renderBoard, renderStart, hideBoard, renderGameOver } from "./dom";
 import Player from "./player";
 
 function initGame() {
@@ -12,8 +7,7 @@ function initGame() {
   renderBoard(p1);
   renderBoard(AI);
   hideBoard(AI);
-  renderButtons();
-  addButtonListeners(p1, AI);
+  renderStart(p1, AI);
 }
 
 export { initGame };

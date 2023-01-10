@@ -1,4 +1,5 @@
 import logo from "../images/logo.svg";
+import { initGame } from "./game";
 document.querySelector(".head_logo").src = logo;
 
 function renderBoard(player) {
@@ -55,49 +56,71 @@ function renderShips(p1, AI) {
       if (p1.gameboard.board[z][x].ship) {
         document.getElementById(`1-${z}-${x}`).classList.add("ship_friend");
       }
-      if (AI.gameboard.board[z][x].ship) {
-        document.getElementById(`2-${z}-${x}`).classList.add("ship_enemy");
-      }
+      //   if (AI.gameboard.board[z][x].ship) {
+      //     document.getElementById(`2-${z}-${x}`).classList.add("ship_enemy");
+      //   }
     }
   }
 }
 
-function renderGameOver(attacker) {
-  const bg = document.createElement("div");
-  const h1 = document.createElement("h1");
-  const h2 = document.createElement("h2");
-  h1.textContent = `Game Over!`;
-  h2.textContent = `${attacker.name} won`;
-  bg.classList.add("bg");
-  bg.append(h1, h2);
-  document.querySelector("body").append(bg);
-}
-
-function renderButtons() {
+function renderStart(player, AI) {
+  const main = document.querySelector(".main");
   const startBtn = document.createElement("div");
   const randomBtn = document.createElement("div");
+  const buttonCont = document.createElement("div");
+
   startBtn.classList.add("button");
   randomBtn.classList.add("button");
+  buttonCont.classList.add("button-cont");
   startBtn.textContent = "Start Game";
   randomBtn.textContent = "Random Fleet";
   startBtn.setAttribute("id", "start");
   randomBtn.setAttribute("id", "random");
-  document.querySelector(".main").append(startBtn, randomBtn);
-}
+  buttonCont.append(startBtn, randomBtn);
+  main.append(buttonCont);
 
-function addButtonListeners(player, AI) {
-  const startBtn = document.getElementById("start");
-  const randomBtn = document.getElementById("random");
+  main.style.flexDirection = "column";
 
   startBtn.addEventListener("click", () => {
-    console.log(player.gameboard.ships.length);
-    if (player.gameboard.ships.length !== 0) startGame(player, AI);
+    if (player.gameboard.ships.length !== 0) {
+      main.style.flexDirection = "row";
+      startGame(player, AI);
+    }
   });
+
   randomBtn.addEventListener("click", () => {
     player.gameboard.randomFleet();
     clearBoard("1");
     renderShips(player, AI);
   });
+}
+
+function renderGameOver(attacker) {
+  const bg = document.createElement("div");
+  const container = document.createElement("div");
+  const h1 = document.createElement("h1");
+  const h2 = document.createElement("h2");
+  const playAgain = document.createElement("div");
+
+  h1.textContent = `Game Over!`;
+  h2.textContent = `${attacker.name} won`;
+  playAgain.textContent = "Play Again";
+  bg.classList.add("bg");
+  playAgain.classList.add("button");
+  container.classList.add("gameOver-cont");
+
+  container.append(h1, h2);
+  bg.append(container, playAgain);
+  document.querySelector("body").append(bg);
+
+  playAgain.addEventListener("click", () => {
+    resetGame();
+    initGame();
+  });
+}
+
+function removeBackground() {
+  document.querySelector(".bg").remove();
 }
 
 function removeButtons() {
@@ -157,4 +180,10 @@ function startGame(player, AI) {
   removeButtons();
 }
 
-export { renderBoard, renderButtons, addButtonListeners, hideBoard };
+function resetGame() {
+  const main = document.querySelector(".main");
+  removeBackground();
+  main.innerHTML = "";
+}
+
+export { renderBoard, renderStart, hideBoard, renderGameOver };
