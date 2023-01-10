@@ -1,38 +1,45 @@
 import logo from "../images/logo.svg";
 document.querySelector(".head_logo").src = logo;
 
-import Player from "./player";
-
-function renderBoards(p1, AI) {
-  const main = document.querySelector(".main");
-  const board1 = document.createElement("div");
-  const board2 = document.createElement("div");
-  board1.classList = "board-1";
-  board2.classList = "board-2";
+function renderBoard(player) {
+  const board = document.createElement("div");
+  board.classList = player.AI ? "board-2" : "board-1";
 
   for (let i = 0; i < 10; i++) {
-    const row1 = document.createElement("div");
-    const row2 = document.createElement("div");
-    row1.classList = "row-1";
-    row2.classList = "row-2";
-    row1.setAttribute("id", `1-${i}`);
-    row2.setAttribute("id", `2-${i}`);
-    board1.appendChild(row1);
-    board2.appendChild(row2);
+    const row = document.createElement("div");
+    row.classList = player.AI ? "row-2" : "row-1";
+    row.setAttribute("id", `${player.AI ? `2-${i}` : `1-${i}`}`);
+    board.appendChild(row);
 
     for (let u = 0; u < 10; u++) {
-      const cell1 = document.createElement("div");
-      const cell2 = document.createElement("div");
-      cell1.classList = "cell-1";
-      cell2.classList = "cell-2";
-      cell1.setAttribute("id", `1-${i}-${u}`);
-      cell2.setAttribute("id", `2-${i}-${u}`);
-
-      row1.appendChild(cell1);
-      row2.appendChild(cell2);
+      const cell = document.createElement("div");
+      cell.classList = player.AI ? "cell-2" : "cell-1";
+      cell.setAttribute("id", `${player.AI ? `2-${i}-${u}` : `1-${i}-${u}`}`);
+      row.append(cell);
     }
   }
-  main.append(board1, board2);
+  document.querySelector(".main").append(board);
+}
+
+function showBoard(player) {
+  player.AI
+    ? (document.querySelector(".board-2").style.display = "grid")
+    : (document.querySelector(".board-1").style.display = "grid");
+}
+
+function hideBoard(player) {
+  player.AI
+    ? (document.querySelector(".board-2").style.display = "none")
+    : (document.querySelector(".board-1").style.display = "none");
+}
+
+function clearBoard(board) {
+  for (let z = 0; z < 10; z++) {
+    for (let x = 0; x < 10; x++) {
+      const cell = document.getElementById(`${board}-${z}-${x}`);
+      cell.classList = `cell-${board}`;
+    }
+  }
 }
 
 function renderShips(p1, AI) {
@@ -48,11 +55,53 @@ function renderShips(p1, AI) {
       if (p1.gameboard.board[z][x].ship) {
         document.getElementById(`1-${z}-${x}`).classList.add("ship_friend");
       }
-      //   if (AI.gameboard.board[z][x].ship) {
-      //     document.getElementById(`2-${z}-${x}`).classList.add("ship_enemy");
-      //   }
+      if (AI.gameboard.board[z][x].ship) {
+        document.getElementById(`2-${z}-${x}`).classList.add("ship_enemy");
+      }
     }
   }
+}
+
+function renderGameOver(attacker) {
+  const bg = document.createElement("div");
+  const h1 = document.createElement("h1");
+  const h2 = document.createElement("h2");
+  h1.textContent = `Game Over!`;
+  h2.textContent = `${attacker.name} won`;
+  bg.classList.add("bg");
+  bg.append(h1, h2);
+  document.querySelector("body").append(bg);
+}
+
+function renderButtons() {
+  const startBtn = document.createElement("div");
+  const randomBtn = document.createElement("div");
+  startBtn.classList.add("button");
+  randomBtn.classList.add("button");
+  startBtn.textContent = "Start Game";
+  randomBtn.textContent = "Random Fleet";
+  startBtn.setAttribute("id", "start");
+  randomBtn.setAttribute("id", "random");
+  document.querySelector(".main").append(startBtn, randomBtn);
+}
+
+function addButtonListeners(player, AI) {
+  const startBtn = document.getElementById("start");
+  const randomBtn = document.getElementById("random");
+
+  startBtn.addEventListener("click", () => {
+    console.log(player.gameboard.ships.length);
+    if (player.gameboard.ships.length !== 0) startGame(player, AI);
+  });
+  randomBtn.addEventListener("click", () => {
+    player.gameboard.randomFleet();
+    clearBoard("1");
+    renderShips(player, AI);
+  });
+}
+
+function removeButtons() {
+  document.querySelectorAll(".button").forEach((button) => button.remove());
 }
 
 function playerAttack(click) {
@@ -69,8 +118,8 @@ function playerAttack(click) {
   changeCellStlye(["2", y, x], AI, click.target);
   p1.attack([y, x], AI.gameboard);
   p1.turn = false;
-  if (isGameOver(p1, AI)) return;
-  setTimeout(aiAttack, 700, p1, AI);
+  if (AI.gameboard.isGameOver()) renderGameOver(p1);
+  setTimeout(aiAttack, 600, p1, AI);
 }
 
 function aiAttack(p1, AI) {
@@ -79,7 +128,7 @@ function aiAttack(p1, AI) {
     [y, x] = p1.gameboard.returnRandomCoordinates();
   }
   changeCellStlye(["1", y, x], p1);
-  if (isGameOver(p1)) renderGameOver(AI);
+  if (p1.gameboard.isGameOver()) renderGameOver(AI);
   p1.turn = true;
 }
 
@@ -101,43 +150,11 @@ function changeCellStlye(c, attacked) {
   }
 }
 
-function renderStartScreen() {
-  const bg = document.createElement("div");
-  const startBtn = document.createElement("div");
-  bg.classList.add("bg");
-  startBtn.classList.add("bg_button");
-  startBtn.textContent = "Start Game";
-  bg.appendChild(startBtn);
-  document.querySelector("body").appendChild(bg);
-
-  startBtn.addEventListener("click", startGame);
-}
-
-function startGame() {
-  removeBackground();
-  const p1 = new Player("Kamran");
-  const AI = new Player("AI", true);
-  p1.gameboard.randomFleet();
+function startGame(player, AI) {
+  showBoard(AI);
   AI.gameboard.randomFleet();
-  renderShips(p1, AI);
+  renderShips(player, AI);
+  removeButtons();
 }
 
-function removeBackground() {
-  document.querySelector(".bg").remove();
-}
-
-function isGameOver(attacked) {
-  return attacked.gameboard.noShipsLeft() ? true : false;
-}
-function renderGameOver(attacker) {
-  const bg = document.createElement("div");
-  const h1 = document.createElement("h1");
-  const h2 = document.createElement("h2");
-  h1.textContent = `Game Over!`;
-  h2.textContent = `${attacker.name} won`;
-  bg.classList.add("bg");
-  bg.append(h1, h2);
-  document.querySelector("body").append(bg);
-}
-
-export { renderBoards, renderShips, renderStartScreen, startGame };
+export { renderBoard, renderButtons, addButtonListeners, hideBoard };

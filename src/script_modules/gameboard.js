@@ -48,7 +48,7 @@ class Gameboard {
     return this.board[c[0]][c[1]].reserved === true ? true : false;
   }
 
-  noShipsLeft() {
+  isGameOver() {
     return this.ships.every((ship) => ship.isSunk()) ? true : false;
   }
 
@@ -72,6 +72,21 @@ class Gameboard {
       this.board[y][x - 1].reserved = true;
     if (this.isValidCoordinate([y + 1, x - 1]))
       this.board[y + 1][x - 1].reserved = true;
+  }
+
+  #clearBoard() {
+    this.board = [];
+    for (let i = 0; i < 10; i++) {
+      const row = [];
+      for (let i = 0; i < 10; i++) {
+        row.push({
+          hit: false,
+          ship: false,
+          reserved: false,
+        });
+      }
+      this.board.push(row);
+    }
   }
 
   returnRandomCoordinates() {
@@ -122,6 +137,7 @@ class Gameboard {
   }
 
   randomFleet() {
+    this.#clearBoard();
     // place 2 ships length of 3
     for (let i = 0; i <= 2; i++) {
       let [y, x] = this.returnRandomCoordinates();
