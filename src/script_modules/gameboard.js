@@ -74,7 +74,8 @@ class Gameboard {
       this.board[y + 1][x - 1].reserved = true;
   }
 
-  #clearBoard() {
+  clearBoard() {
+    this.ships = [];
     this.board = [];
     for (let i = 0; i < 10; i++) {
       const row = [];
@@ -137,7 +138,7 @@ class Gameboard {
   }
 
   randomFleet() {
-    this.#clearBoard();
+    this.clearBoard();
     // place 2 ships length of 3
     for (let i = 0; i <= 2; i++) {
       let [y, x] = this.returnRandomCoordinates();
