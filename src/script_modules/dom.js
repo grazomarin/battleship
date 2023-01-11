@@ -170,13 +170,17 @@ function removeButtons() {
 function returnShip(length) {
   const ship = document.createElement("div");
   const cell = document.createElement("div");
-  ship.classList.add("start_ship");
-  ship.style.width = `${length * 50}px`;
+  ship.classList.add("selection_ship");
+  cell.style.width = "50px";
+  cell.style.height = "50px";
   cell.classList.add("cell-1");
   cell.classList.add("ship_friend");
+  ship.addEventListener("click", () => ship.classList.toggle("vertical"));
+  ship.draggable = true;
   for (let i = 0; i < length; i++) {
     ship.append(cell.cloneNode(true));
   }
+
   return ship;
 }
 

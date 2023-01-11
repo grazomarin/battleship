@@ -126,12 +126,6 @@ h3 {
   }
 
   .start {
-    &_ship {
-      display: grid;
-      grid-auto-flow: column;
-      height: 50px;
-    }
-
     &_cont {
       display: flex;
       flex-direction: column;
@@ -141,15 +135,25 @@ h3 {
   }
 
   .selection {
-    display: flex;
-    flex-direction: column;
+    display: grid;
+    grid-auto-flow: row;
+    width: 12vw;
+
+    &_ship {
+      display: grid;
+      grid-auto-flow: column;
+      height: auto;
+    }
 
     &_cont {
       margin: 20px 0;
-
       display: flex;
       align-items: center;
       gap: 10px;
+    }
+
+    .vertical {
+      grid-auto-flow: row;
     }
   }
 }
