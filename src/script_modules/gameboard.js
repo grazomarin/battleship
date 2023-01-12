@@ -22,6 +22,13 @@ class Gameboard {
     return this.board[c[0]][c[1]].ship instanceof Ship ? true : false;
   }
 
+  numberOfSpecificShips(length) {
+    const array = this.ships.filter((ship) => {
+      return ship.length === length;
+    });
+    return array.length;
+  }
+
   isValidCoordinate(c) {
     return this.board[c[0]] !== undefined
       ? this.board[c[0]][c[1]] !== undefined

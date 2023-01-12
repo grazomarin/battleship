@@ -1,22 +1,27 @@
 import logo from "../images/logo.svg";
+import {
+  assignCellToDrag,
+  dragEnter,
+  dragOver,
+  dragStart,
+  drop,
+  hideElem,
+  shipDrag,
+} from "./drag_n_drop";
 import { initGame } from "./game";
 document.querySelector(".head_logo").src = logo;
 
 function renderBoard(player) {
   const board = document.createElement("div");
   board.classList = player.AI ? "board-2" : "board-1";
+  board.player = player;
 
   for (let i = 0; i < 10; i++) {
-    const row = document.createElement("div");
-    row.classList = player.AI ? "row-2" : "row-1";
-    row.setAttribute("id", `${player.AI ? `2-${i}` : `1-${i}`}`);
-    board.appendChild(row);
-
     for (let u = 0; u < 10; u++) {
       const cell = document.createElement("div");
       cell.classList = player.AI ? "cell-2" : "cell-1";
       cell.setAttribute("id", `${player.AI ? `2-${i}-${u}` : `1-${i}-${u}`}`);
-      row.append(cell);
+      board.append(cell);
     }
   }
   return board;
@@ -39,22 +44,15 @@ function clearBoard(board) {
   }
 }
 
-function renderShips(p1, AI) {
+function renderShips(p1) {
   for (let z = 0; z < 10; z++) {
     for (let x = 0; x < 10; x++) {
       const cell1 = document.getElementById(`1-${z}-${x}`);
       const cell2 = document.getElementById(`2-${z}-${x}`);
-      cell1.attacker = AI;
-      cell1.attacked = p1;
-      cell2.attacker = p1;
-      cell2.attacked = AI;
       cell2.addEventListener("click", playerAttack);
       if (p1.gameboard.board[z][x].ship) {
-        document.getElementById(`1-${z}-${x}`).classList.add("ship_friend");
+        cell1.classList.add("ship_friend");
       }
-      //   if (AI.gameboard.board[z][x].ship) {
-      //     document.getElementById(`2-${z}-${x}`).classList.add("ship_enemy");
-      //   }
     }
   }
 }
@@ -73,6 +71,9 @@ function renderSelection() {
   ship5Quant.textContent = "x2";
   ship3Quant.textContent = "x2";
   ship2Quant.textContent = "x2";
+  ship5Quant.setAttribute("id", "ship5");
+  ship3Quant.setAttribute("id", "ship3");
+  ship2Quant.setAttribute("id", "ship2");
   cont.classList.add("selection");
   ship5Cont.classList.add("selection_cont");
   ship3Cont.classList.add("selection_cont");
@@ -112,6 +113,14 @@ function renderStart(player, AI) {
   main.append(startCont, board2);
   hideBoard(board2);
 
+  board1.player = player;
+  board2.player = AI;
+
+  board1.childNodes.forEach((cell) => {
+    cell.addEventListener("dragover", dragOver);
+    cell.addEventListener("drop", drop);
+  });
+
   renderSelection();
 
   startBtn.addEventListener("click", () => {
@@ -126,7 +135,7 @@ function renderStart(player, AI) {
   randomBtn.addEventListener("click", () => {
     player.gameboard.randomFleet();
     clearBoard("1");
-    renderShips(player, AI);
+    renderShips(player);
   });
 
   resetBtn.addEventListener("click", () => {
@@ -167,18 +176,47 @@ function removeButtons() {
   document.querySelectorAll(".button").forEach((button) => button.remove());
 }
 
+function showReservedSpaces() {
+  const board = document.querySelector(".board-1");
+  const player = board.player;
+
+  for (let i = 0; i < 10; i++) {
+    for (let u = 0; u < 10; u++) {
+      const cell = document.getElementById(`1-${i}-${u}`);
+      if (player.gameboard.board[i][u].reserved) cell.classList.add("reserved");
+    }
+  }
+}
+
+function hideReservedSpaces() {
+  const board = document.querySelector(".board-1");
+  const player = board.player;
+
+  for (let i = 0; i < 10; i++) {
+    for (let u = 0; u < 10; u++) {
+      const cell = document.getElementById(`1-${i}-${u}`);
+      if (player.gameboard.board[i][u].reserved)
+        cell.classList.remove("reserved");
+    }
+  }
+}
+
 function returnShip(length) {
   const ship = document.createElement("div");
-  const cell = document.createElement("div");
   ship.classList.add("selection_ship");
-  cell.style.width = "50px";
-  cell.style.height = "50px";
-  cell.classList.add("cell-1");
-  cell.classList.add("ship_friend");
   ship.addEventListener("click", () => ship.classList.toggle("vertical"));
+  ship.addEventListener("dragstart", dragStart, "text");
   ship.draggable = true;
   for (let i = 0; i < length; i++) {
-    ship.append(cell.cloneNode(true));
+    const cell = document.createElement("div");
+    cell.style.width = "50px";
+    cell.style.height = "50px";
+    cell.classList.add("cell-1");
+    cell.classList.add("ship_friend");
+    cell.setAttribute("id", `${i}-${length}`);
+    cell.addEventListener("mousedown", assignCellToDrag);
+
+    ship.append(cell);
   }
 
   return ship;
@@ -186,8 +224,8 @@ function returnShip(length) {
 
 function playerAttack(click) {
   const c = click.target.id.split("-");
-  const p1 = click.target.attacker;
-  const AI = click.target.attacked;
+  const p1 = document.querySelector(".board-1").player;
+  const AI = document.querySelector(".board-2").player;
   const y = c[1];
   const x = c[2];
 
@@ -232,7 +270,7 @@ function changeCellStlye(c, attacked) {
 
 function startGame(player, AI) {
   AI.gameboard.randomFleet();
-  renderShips(player, AI);
+  renderShips(player);
   removeButtons();
   removeSelection();
 }
@@ -243,4 +281,12 @@ function resetGame() {
   main.innerHTML = "";
 }
 
-export { renderBoard, renderStart, hideBoard, renderGameOver };
+export {
+  renderBoard,
+  renderStart,
+  hideBoard,
+  renderGameOver,
+  renderShips,
+  showReservedSpaces,
+  hideReservedSpaces,
+};
