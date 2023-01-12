@@ -1,7 +1,10 @@
 import { renderShips, showReservedSpaces, hideReservedSpaces } from "./dom";
 
 function dragStart(e) {
-  e.dataTransfer.setData("text/plain", e.target.cell);
+  e.dataTransfer.setData("text/plain", [
+    e.target.cell,
+    e.target.classList.contains("vertical"),
+  ]);
   showReservedSpaces();
 }
 
@@ -14,14 +17,25 @@ function dragOver(e) {
 }
 
 function drop(e) {
-  const id = e.dataTransfer.getData("text/plain");
+  let [id, isVertical] = e.dataTransfer.getData("text/plain").split(",");
   const [cellNum, length] = id.split("-");
   const [board, y, x] = e.target.id.split("-");
   const player = document.querySelector(".board-1").player;
+  isVertical = isVertical === "false" ? false : true;
 
   if (canBePlaced(player, +length)) {
-    if (player.gameboard.placeShip([+y, x - cellNum], +length) !== false) {
-      changeNumberOfShipsLeft(+length);
+    if (isVertical) {
+      if (
+        player.gameboard.placeShip([+y - cellNum, +x], +length, true) !== false
+      ) {
+        changeNumberOfShipsLeft(+length);
+      }
+    } else {
+      if (
+        player.gameboard.placeShip([+y, +x - cellNum], +length, false) !== false
+      ) {
+        changeNumberOfShipsLeft(+length);
+      }
     }
   }
 
