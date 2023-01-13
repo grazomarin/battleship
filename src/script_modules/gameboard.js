@@ -110,6 +110,7 @@ class Gameboard {
 
     if (vertical) {
       if (!this.isValidCoordinate([y + (ship.length - 1), x])) return false;
+      if (!this.isValidCoordinate([y, x])) return false;
       for (let i = 0; i < length; i++) {
         if (this.hasShip([y + i, x])) return false;
         if (this.isReserved([y + i, x])) return false;
@@ -123,6 +124,7 @@ class Gameboard {
       }
     } else {
       if (!this.isValidCoordinate([y, x + (ship.length - 1)])) return false;
+      if (!this.isValidCoordinate([y, x])) return false;
       for (let i = 0; i < length; i++) {
         if (this.hasShip([y, x + i])) return false;
         if (this.isReserved([y, x + i])) return false;

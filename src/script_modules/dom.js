@@ -62,9 +62,9 @@ function renderSelection() {
   const ship5Cont = document.createElement("div");
   const ship3Cont = document.createElement("div");
   const ship2Cont = document.createElement("div");
-  const ship5 = returnShip(5);
-  const ship3 = returnShip(3);
-  const ship2 = returnShip(2);
+  const ship5 = returnDraggableShip(5);
+  const ship3 = returnDraggableShip(3);
+  const ship2 = returnDraggableShip(2);
   const ship5Quant = document.createElement("h3");
   const ship3Quant = document.createElement("h3");
   const ship2Quant = document.createElement("h3");
@@ -126,7 +126,6 @@ function renderStart(player, AI) {
   startBtn.addEventListener("click", () => {
     if (player.gameboard.ships.length === 6) {
       main.prepend(board1);
-      startCont.remove();
       showBoard(board2);
       startGame(player, AI);
     }
@@ -141,6 +140,8 @@ function renderStart(player, AI) {
   resetBtn.addEventListener("click", () => {
     player.gameboard.clearBoard();
     clearBoard("1");
+    removeSelection();
+    renderSelection();
   });
 }
 
@@ -201,10 +202,12 @@ function hideReservedSpaces() {
   }
 }
 
-function returnShip(length) {
+function returnDraggableShip(length) {
   const ship = document.createElement("div");
   ship.classList.add("selection_ship");
-  ship.addEventListener("click", () => ship.classList.toggle("vertical"));
+  ship.addEventListener("click", () => {
+    ship.classList.toggle("vertical");
+  });
   ship.addEventListener("dragstart", dragStart, "text");
   ship.draggable = true;
   for (let i = 0; i < length; i++) {
@@ -236,7 +239,7 @@ function playerAttack(click) {
   changeCellStlye(["2", y, x], AI, click.target);
   p1.attack([y, x], AI.gameboard);
   p1.turn = false;
-  if (AI.gameboard.isGameOver()) renderGameOver(p1);
+  if (AI.gameboard.isGameOver()) return renderGameOver(p1);
   setTimeout(aiAttack, 600, p1, AI);
 }
 
@@ -246,7 +249,7 @@ function aiAttack(p1, AI) {
     [y, x] = p1.gameboard.returnRandomCoordinates();
   }
   changeCellStlye(["1", y, x], p1);
-  if (p1.gameboard.isGameOver()) renderGameOver(AI);
+  if (p1.gameboard.isGameOver()) return renderGameOver(AI);
   p1.turn = true;
 }
 
