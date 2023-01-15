@@ -1,9 +1,4 @@
-import {
-  renderShips,
-  showReservedSpaces,
-  hideReservedSpaces,
-  rotateShip,
-} from "./dom";
+import { renderShips, showReservedSpaces, hideReservedSpaces } from "./dom";
 
 function dragStart(e) {
   e.dataTransfer.setData("text/plain", e.target.cell);
@@ -18,7 +13,14 @@ function dragOver(e) {
   e.preventDefault();
 }
 
+function dragEnd(e) {
+  e.preventDefault();
+  hideReservedSpaces();
+}
+
 function drop(e) {
+  hideReservedSpaces();
+
   const id = e.dataTransfer.getData("text/plain");
   if (!document.getElementById(id)) return;
   const parent = document.getElementById(id).parentNode;
@@ -43,7 +45,6 @@ function drop(e) {
     }
   }
 
-  hideReservedSpaces();
   renderShips(player);
 }
 
@@ -63,4 +64,4 @@ function blockRotation(ship) {
   ship.addEventListener("click", () => ship.classList.remove("vertical"));
 }
 
-export { dragStart, assignCellToDrag, dragOver, drop };
+export { dragStart, assignCellToDrag, dragOver, drop, dragEnd };
