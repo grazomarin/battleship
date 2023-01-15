@@ -41,15 +41,121 @@ h3 {
   align-items: center;
   justify-content: center;
 
-  .board-1,
-  .board-2 {
+  .boardCont {
     display: grid;
-    grid-template-columns: repeat(10, 1fr);
-    grid-template-rows: repeat(10, 1fr);
-    grid-auto-flow: row;
-    width: 500px;
-    height: 500px;
-    margin: 50px 100px;
+    grid-template-rows: 50px auto auto;
+    align-items: center;
+    justify-items: center;
+    gap: 60px;
+
+    .input {
+      &_cont {
+        position: relative;
+        display: grid;
+        grid-template-columns: min-content 1fr;
+        grid-template-rows: 1fr;
+        gap: 10px;
+      }
+
+      &_input {
+        width: 300px;
+        height: 45px;
+        border-radius: $border-radius;
+        border: 2px dashed black;
+        font-size: $h2-size;
+        font-family: $strong-font;
+        text-align: center;
+
+        &:focus {
+          border: 3px solid black;
+        }
+      }
+
+      &_label {
+        font-size: $h2-size;
+      }
+
+      &_error {
+        position: absolute;
+        display: none;
+        bottom: -45px;
+        width: 100%;
+        background-color: $red;
+        color: white;
+        font-size: $h3-size;
+        padding: 5px 10px;
+      }
+    }
+
+    .name {
+      font-size: $h2-size;
+      font-family: $strong-font;
+    }
+
+    .board-1,
+    .board-2 {
+      display: grid;
+      grid-template-columns: repeat(10, 1fr);
+      grid-template-rows: repeat(10, 1fr);
+      grid-auto-flow: row;
+      width: 500px;
+      height: 500px;
+    }
+
+    .cell-2 {
+      &:hover {
+        background-color: $grey;
+        cursor: crosshair;
+      }
+    }
+
+    .ship_enemy_hit {
+      background-color: $red-transparent;
+      box-shadow: 0 0 10px -1px $red inset;
+
+      &:hover {
+        background-color: $red-transparent;
+      }
+    }
+    .ship_friend_hit {
+      background-color: $blue-transparent;
+      box-shadow: 0 0 10px -1px $blue inset;
+    }
+
+    .ship_friend_hit,
+    .ship_enemy_hit {
+      &::after {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        content: "✕";
+        position: absolute;
+        width: 20px;
+        height: 20px;
+        font-size: 2.3rem;
+      }
+    }
+    .empty_hit {
+      &:hover {
+        background-color: white;
+      }
+      .mark {
+        position: absolute;
+        width: 10px;
+        height: 10px;
+        border-radius: 50%;
+        background-color: black;
+      }
+    }
+  }
+
+  /* 
+    cell-1, cell-2, ship-friend classes are outside boardCont class because otherwise
+    selection styling wouldn't work
+  */
+
+  .reserved {
+    background-color: $red-transparent;
   }
 
   .cell-1,
@@ -60,73 +166,9 @@ h3 {
     justify-content: center;
     border: 1px solid rgba(0, 0, 0, 0.223);
   }
-  .cell-2 {
-    &:hover {
-      background-color: $grey;
-      cursor: crosshair;
-    }
-  }
-  .reserved {
-    background-color: $red-transparent;
-  }
 
   .ship_friend {
     background-color: $blue;
-  }
-
-  .ship_enemy {
-    background-color: $red;
-    &:hover {
-      background-color: $red;
-    }
-  }
-
-  .ship_enemy_hit {
-    background-color: $red-transparent;
-    box-shadow: 0 0 10px -1px $red inset;
-
-    &:hover {
-      background-color: $red-transparent;
-    }
-  }
-  .ship_friend_hit {
-    background-color: $blue-transparent;
-    box-shadow: 0 0 10px -1px $blue inset;
-  }
-
-  .ship_friend_hit,
-  .ship_enemy_hit {
-    &::after {
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      content: "✕";
-      position: absolute;
-      width: 20px;
-      height: 20px;
-      font-size: 2.3rem;
-    }
-  }
-  .empty_hit {
-    &:hover {
-      background-color: white;
-    }
-    .mark {
-      position: absolute;
-      width: 10px;
-      height: 10px;
-      border-radius: 50%;
-      background-color: black;
-    }
-  }
-
-  .start {
-    &_cont {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-    }
   }
 
   .selection {
@@ -189,7 +231,7 @@ h3 {
 .button {
   height: 70px;
   width: 200px;
-  border-radius: 10px;
+  border-radius: $border-radius;
   background-color: $cream;
   box-shadow: 0 0 10px 1px rgba(0, 0, 0, 0.4);
   transition: 0.15s all ease-in-out;
